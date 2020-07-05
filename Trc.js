@@ -10,7 +10,6 @@ class Tcr {
         } else {
             throw Error('This argument can only be a string or an object')
         }
-        this.$val = val;
         all.add(this)
         this.$all = all;
     }
