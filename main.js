@@ -12,5 +12,5 @@ import Tcr from "./Trc.js";
 // new Tcr('D',all).add(e2,e1,e5);
 // new Tcr('E',all).add(e5,e6);
 // new Tcr('F',all).add(e2,e3);
-let n = Tcr.create({ A: [{ ke: '1' }, '2', '3'], B: ['2', { key: '3' }, '4'], C: ['3', '4', '5'] })
+let n = Tcr.create({ 'h6 1.5': [{ key: '机滤 20', 机滤: '20' }, { key: '空滤 46', 空滤: '46' }, { key: '燃滤 35', 燃滤: '35' }], 'h6c 2.0': [{ key: '机滤 48', 机滤: '48' }, { key: '空滤 46', 空滤: '46' }, { key: '燃滤 29', 燃滤: '29' }] })
 console.log(n)

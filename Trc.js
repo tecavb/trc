@@ -1,7 +1,7 @@
 class Tcr {
-    constructor(val, all) {//val:可以是字符串,也可以是对象，但必须含有key这个键名，all:大杂烩，包含所有节点，构建实例的时候必须传进去
+    constructor(val, all) {//val:可以是字符串,也可以是对象，但必须含有key这个键名.
+        //all:大杂烩，包含所有节点，构建实例的时候必须传进去
         let temp = Object.prototype.toString.call(val) == '[object Object]';
-        debugger;
         if (temp) {
             if (!val.key) {
                 throw Error('The object must contain the key name "key"')
@@ -52,23 +52,19 @@ class Tcr {
         })
         return temp
     }
-    static create(obj) {//直接传入对象，就可以直接生成Tcr链
-        !obj && console.log('e.g:{key1:[val1,val2,val3],key2:[val2,val3,val4]}');
-        let ary = {}, all = new Set;
+    static create(obj) {//直接传入对象，就可以直接生成Tcr链,key是唯一标识，如果key的值相同就不会重复录用视为同一个节点。
+        if (!obj) return 'e.g:{key1:[{key : val1},{key : val2},{key : val3}],key2:[val2,val3,val4]}';
+        let n = null;
+        let Obj = {}, all = new Set;
         Object.keys(obj).forEach(item => {
+            let tem = new Tcr(item, all)
             obj[item].forEach(it => {
-                typeof it == 'object' ? it = it.key : null
-                let temp = Object.keys(ary).some(item => {
-                    return ary[item].$val.key == it
+                typeof it == 'object' ? n = it.key : n = it;
+                let temp = Object.keys(Obj).some(item => {
+                    return Obj[item].$val.key == n;
                 })
-                temp ? null : ary[it] = new Tcr(it, all);
-            })
-        })
-        Object.keys(obj).forEach(item => {
-            let temp = new Tcr(item, all)
-            obj[item].forEach(it => {
-                typeof it == 'object' ? it = it.key : null
-                temp.add(ary[it])
+                temp ? null : Obj[n] = new Tcr(it, all);//key是唯一标识，如果相同key值存在就不会再添加。
+                tem.add(Obj[n])
             })
         })
         return all
