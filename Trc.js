@@ -12,12 +12,12 @@ class Tcr {
             throw Error('This argument can only be a string or an object')
         }
         this.$val = val;
-        all.add(this)
+        all[val.key] = this
         this.$all = all;
     }
     forEach(callbackfn) {//寻找实例中的每一项，不包括含'$'的
         Object.keys(this).forEach((item, index) => {
-            /^\$.*/.test(item) ? null : callbackfn(item, index, this)
+            /^\$.*/.test(item) ? null : callbackfn(this[item], index, this)
         })
     }
     include(searchElement) {//检测实例中是否包含选项
@@ -27,7 +27,7 @@ class Tcr {
         })
         return temp;
     }
-    add() {
+    add() {//参数只能是Tcr实例
         [...arguments].forEach(val => {
             if (!(val instanceof Tcr)) {
                 throw Error('Arguments can only be Tcr')
@@ -52,22 +52,20 @@ class Tcr {
         })
         return temp
     }
-    static create(obj) {//直接传入对象，就可以直接生成Tcr链,key是唯一标识，如果key的值相同就不会重复录用视为同一个节点。
-        if (!obj) return 'e.g:{key1:[{key : val1},{key : val2},{key : val3}],key2:[val2,val3,val4]}';
-        let n = null;
-        let Obj = {}, all = new Set;
-        Object.keys(obj).forEach(item => {
-            let tem = new Tcr(item, all)
-            obj[item].forEach(it => {
-                typeof it == 'object' ? n = it.key : n = it;
-                let temp = Object.keys(Obj).some(item => {
-                    return Obj[item].$val.key == n;
-                })
-                temp ? null : Obj[n] = new Tcr(it, all);//key是唯一标识，如果相同key值存在就不会再添加。
-                tem.add(Obj[n])
-            })
+    static create(...name) {//库，库内不能重名（key相同
+        let obj = {};
+        name.forEach(item => {
+            obj[item] = new Proxy({}, {
+                get: function (target, key, receiver) {
+                    return target[key]
+                },
+                set: function (target, key, value, receiver) {
+                    new Tcr(value, target)//利用proxy简化过程，不在需要一直创建实例，像对象一样
+                    return target
+                }
+            });
         })
-        return all
+        return obj
     }
 }
 export default Tcr
